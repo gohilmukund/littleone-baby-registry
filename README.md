@@ -6,7 +6,7 @@ A mobile-first wishlist for our little one's arrival. Guests can reserve gifts t
 
 ## Update the gift list (no code edits)
 
-Wishlist items are managed in [`config/gifts.md`](config/gifts.md). Edit that file to add, remove, or update gifts.
+Wishlist items are managed in [config/gifts.md](config/gifts.md). Edit that file to add, remove, or update gifts.
 
 Each item follows this format:
 

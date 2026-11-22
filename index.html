@@ -19,7 +19,7 @@ dialog[open]{animation:dialogPop .28s cubic-bezier(.2,.8,.2,1) both}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.card{opacity:1;transform:none}}
 @media(max-width:750px){.hero{grid-template-columns:1fr;padding:13vw 7vw;gap:35px}.hero-photo{width:100%;max-width:480px}.hero-photo img{max-height:620px}.nav a{margin-left:10px;font-size:12px}.grid{grid-template-columns:1fr 1fr;gap:12px}.card .emoji{height:110px}.content{padding:15px}.content h3{font-size:19px}.section{padding:45px 5vw}.intro{display:block}.copy{font-size:14px}}@media(max-width:420px){.grid{grid-template-columns:1fr}.nav a:first-child{display:none}}
 </style></head><body>
-<div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div><header><a class="brand" href="#">LittleOne<small>by Mukund & Khushbu</small></a><nav class="nav"><a href="#wishlist">Wishlist</a><a href="#note">Our note</a></nav></header>
+<div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div><header><a class="brand" href="#">LittleOne<small>by Mukund & Khushbu</small></a><nav class="nav"><a href="#wishlist">Wishlist</a><a href="#shipping">Send a gift</a><a href="#note">Our note</a></nav></header>
 <main><section class="hero"><div class="fade"><div class="eyebrow">A LITTLE WISH. A LOT OF LOVE.</div><h1>Our little one<br>is on the way<span> ♡</span></h1><p class="copy">Your love and blessings mean the world to us. If you'd like to gift something, we've made a little wishlist of things that may be useful for our baby.</p><p class="copy">Choose anything you like, from anywhere you like. No brand or price is expected — this is just a little guide.</p><a class="btn" href="#wishlist">Browse the wishlist ↓</a></div><div class="hero-photo"><img src="./assets/maternity-hero.jpg" alt="Mukund and Khushbu celebrating the arrival of their little one with a baby loading sign" fetchpriority="high"></div></section>
 <div class="strip">We made this list to help avoid duplicate gifts and make choosing a little easier. There is absolutely no obligation. Your presence and blessings are the greatest gift. ♡</div>
 <section class="section" id="wishlist"><div class="intro"><div><div class="eyebrow">THE GIFT LIST</div><h2>Something lovely for<br>our little one</h2></div><p class="copy">Gift ideas, not product requirements. Any brand, store or price is welcome.</p></div><div class="grid" id="grid"></div></section>
@@ -41,7 +41,7 @@ async function loadGifts(){
   if(!gifts.length)throw new Error('Wishlist config is empty');
  }catch(error){grid.innerHTML='<p class="copy">Wishlist could not load. Please refresh in a moment.</p>';console.error(error)}
 }
-let reserved=JSON.parse(localStorage.getItem('littleone-preview-reservations')||'{}'),selected=-1;
+let reserved={},selected=-1; // Shared reservation backend is not connected yet; never save guest data locally.
 const grid=document.getElementById('grid');
 let revealObserver;
 function watchCards(){
@@ -72,5 +72,5 @@ function updateProgress(){
 }
 window.addEventListener('scroll',updateProgress,{passive:true});
 window.addEventListener('resize',updateProgress);
-updateProgress();const dlg=document.getElementById('dlg');document.getElementById('close').onclick=()=>dlg.close();document.getElementById('form').onsubmit=e=>{e.preventDefault();reserved[selected]=(reserved[selected]||0)+1;localStorage.setItem('littleone-preview-reservations',JSON.stringify(reserved));dlg.close();render();const t=document.getElementById('toast');t.textContent='Preview reservation saved on this device ♡';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);e.target.reset()};
+updateProgress();const dlg=document.getElementById('dlg');document.getElementById('close').onclick=()=>dlg.close();document.getElementById('form').onsubmit=e=>{e.preventDefault();dlg.close();const t=document.getElementById('toast');t.textContent='Shared reservations are being set up. Please contact us to coordinate this gift ♡';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);e.target.reset()};
 </script></body></html>

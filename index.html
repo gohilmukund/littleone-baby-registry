@@ -81,7 +81,7 @@ function toast(message){const t=document.getElementById('toast');t.textContent=m
 document.getElementById('form').onsubmit=async e=>{e.preventDefault();if(!firebaseReady||selected<0){toast('Reservations are temporarily unavailable. Please contact us ♡');return}
  const gift=gifts[selected],slots=reservationsByGift[gift[0]]||[];
  if(slots.length>=gift[4]){toast('This gift has already been reserved ♡');dlg.close();return}
- const nextSlot=Array.from({length:gift[4]},(_,i)=>i).find(i=>!slots.some(r=>r.slot===i));
+ const nextSlot=Array.from({length:gift[4]},(_,i)=>i).find(i=>!slots.some(r=>r.slot===String(i)));
  if(nextSlot===undefined){toast('This gift is already fully reserved ♡');dlg.close();return}
  const btn=e.target.querySelector('button[type="submit"]');btn.disabled=true;btn.textContent='Saving reservation…';
  try{await reserveGift(gift[0],nextSlot);dlg.close();toast('Gift reserved successfully — thank you! ♡');e.target.reset()}
@@ -107,7 +107,7 @@ try{
   },err=>{console.error('Firestore listener:',err);firebaseReady=false;toast('Could not load shared reservations. Please retry.')});
  });
  window.reserveGift=async(giftId,slot)=>{
-  const ref=doc(db,'reservations',giftId+'__'+slot);
+  const slot=String(slot);const ref=doc(db,'reservations',giftId+'__'+slot);
   await runTransaction(db,async tx=>{
    const existing=await tx.get(ref);
    if(existing.exists())throw new Error('Slot already reserved');

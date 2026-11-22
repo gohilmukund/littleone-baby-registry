@@ -29,6 +29,8 @@ dialog[open]{animation:dialogPop .28s cubic-bezier(.2,.8,.2,1) both}
 let gifts=[];
 const reservationsByGift={};
 let firebaseReady=false, currentUid=null, reservationsUnsubscribe=null;
+// Explicit bridge for the Firebase module script.
+window.gifts=gifts; window.reservationsByGift=reservationsByGift; window.firebaseReady=false; window.currentUid=null; window.reservationsUnsubscribe=null;
 const giftIds=['soft-baby-bath-towel','muslin-cloths-swaddles','baby-board-books','soft-cotton-bibs','baby-storage-basket','cotton-rompers-3-6-months','age-appropriate-baby-toy','portable-changing-mat','baby-feeding-accessories','baby-keepsake-box','convertible-maternity-baby-bag','soft-baby-blanket'];
 async function loadGifts(){
  try{
@@ -43,6 +45,7 @@ async function loadGifts(){
    return [giftId,name,fields.category||'Gift',fields.description||'',Number(fields.quantity||1),Number(fields.photo||0)];
   });
   if(!gifts.length)throw new Error('Wishlist config is empty');
+  window.gifts=gifts;
  }catch(error){grid.innerHTML='<p class="copy">Wishlist could not load. Please refresh in a moment.</p>';console.error(error)}
 }
 let reserved={},selected=-1; // reservation state is loaded from Firestore, never browser storage.
@@ -78,7 +81,7 @@ window.addEventListener('scroll',updateProgress,{passive:true});
 window.addEventListener('resize',updateProgress);
 updateProgress();const dlg=document.getElementById('dlg');document.getElementById('close').onclick=()=>dlg.close();
 function toast(message){const t=document.getElementById('toast');t.textContent=message;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
-document.getElementById('form').onsubmit=async e=>{e.preventDefault();if(!firebaseReady||selected<0){toast('Reservations are temporarily unavailable. Please contact us ♡');return}
+document.getElementById('form').onsubmit=async e=>{e.preventDefault();if(!window.firebaseReady||selected<0){toast('Reservations are temporarily unavailable. Please contact us ♡');return}
  const gift=gifts[selected],slots=reservationsByGift[gift[0]]||[];
  if(slots.length>=gift[4]){toast('This gift has already been reserved ♡');dlg.close();return}
  const nextSlot=Array.from({length:gift[4]},(_,i)=>i).find(i=>!slots.some(r=>r.slot===String(i)));
@@ -98,20 +101,20 @@ try{
  const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
  await signInAnonymously(auth);
  onAuthStateChanged(auth,async user=>{
-  if(!user)return;currentUid=user.uid;
-  if(reservationsUnsubscribe)reservationsUnsubscribe();
-  reservationsUnsubscribe=onSnapshot(collection(db,'reservations'),snap=>{
-   gifts.forEach(g=>reservationsByGift[g[0]]=[]);
-   snap.forEach(d=>{const r=d.data();if(reservationsByGift[r.giftId])reservationsByGift[r.giftId].push({slot:r.slot,uid:r.uid})});
-   firebaseReady=true;render();
-  },err=>{console.error('Firestore listener:',err);firebaseReady=false;toast('Could not load shared reservations. Please retry.')});
+  if(!user)return;window.currentUid=user.uid;
+  if(window.reservationsUnsubscribe)window.reservationsUnsubscribe();
+  window.reservationsUnsubscribe=onSnapshot(collection(db,'reservations'),snap=>{
+   window.gifts.forEach(g=>window.reservationsByGift[g[0]]=[]);
+   snap.forEach(d=>{const r=d.data();if(window.reservationsByGift[r.giftId])window.reservationsByGift[r.giftId].push({slot:r.slot,uid:r.uid})});
+   window.firebaseReady=true;render();
+  },err=>{console.error('Firestore listener:',err);window.firebaseReady=false;toast('Could not load shared reservations. Please retry.')});
  });
- window.reserveGift=async(giftId,slot)=>{
-  const slot=String(slot);const ref=doc(db,'reservations',giftId+'__'+slot);
+ window.reserveGift=async(giftId,slotValue)=>{
+  const slot=String(slotValue);const ref=doc(db,'reservations',giftId+'__'+slot);
   await runTransaction(db,async tx=>{
    const existing=await tx.get(ref);
    if(existing.exists())throw new Error('Slot already reserved');
-   tx.set(ref,{giftId,slot,uid:currentUid,createdAt:serverTimestamp()});
+   tx.set(ref,{giftId,slot,uid:window.currentUid,createdAt:serverTimestamp()});
   });
  };
 }catch(err){console.error('Firebase initialization/authentication failed:',err);toast('Reservations could not connect. Please contact us.')}

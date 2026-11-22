@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fbf7f1">
+<title>Hospital Bag Checklist | LittleOne</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+:root{--cream:#fbf7f1;--ink:#3d4540;--sage:#879c8a;--muted:#7b827a;--line:#e9e3d9;--peach:#f3e8df;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.55}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:14px 5vw;background:#fbf7f1ed;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.brand{font:600 25px 'Playfair Display';color:var(--ink);text-decoration:none}.brand small{display:block;font:11px 'DM Sans';letter-spacing:1px;color:var(--muted)}
+nav a{color:inherit;text-decoration:none;margin-left:18px;font-size:13px}
+main{max-width:1080px;margin:auto;padding:44px 24px 70px}
+.eyebrow{letter-spacing:3px;color:var(--sage);font-size:11px;font-weight:700}
+h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
+h1{font-size:clamp(38px,6vw,64px);line-height:1.08;margin:12px 0}
+.lead{color:var(--muted);font-size:16px;max-width:720px}
+.topline{display:flex;justify-content:space-between;gap:24px;align-items:center;flex-wrap:wrap}
+.top-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:0;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;cursor:pointer;border-radius:30px;padding:12px 18px;font:600 13px 'DM Sans';background:var(--sage);color:#fff}
+.btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.progress-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:17px 20px;margin:28px 0 20px}
+.progress-head{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted);margin-bottom:9px}
+.track{height:8px;background:#edf0ea;border-radius:20px;overflow:hidden}.fill{height:100%;width:0;background:var(--sage);border-radius:20px;transition:width .2s}
+.tip{background:#f3e8df;border-radius:18px;padding:16px 19px;color:#665f56;font-size:13px;margin:18px 0 28px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px 22px 17px;box-shadow:0 8px 28px #7c766b0b}
+.card.full{grid-column:1/-1}
+.card-head{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+.icon{width:42px;height:42px;flex:0 0 42px;border-radius:14px;background:#edf1eb;display:grid;place-items:center;font-size:21px}
+h2{font-size:23px;margin:0}.sub{font-size:12px;color:var(--muted);margin:3px 0 0}
+.items{display:grid;gap:0}
+.item{display:flex;align-items:flex-start;gap:11px;padding:10px 0;border-top:1px solid #f1ede7;font-size:14px;cursor:pointer}
+.item input{accent-color:var(--sage);width:18px;height:18px;flex:0 0 18px;margin:1px 0 0}
+.item span{flex:1}.item small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.item input:checked+span{text-decoration:line-through;color:#92988f}
+.note{margin-top:20px;background:#e8eee8;border-radius:20px;padding:21px 23px}
+.note h2{font-size:23px;margin-bottom:8px}.note p,.note li{font-size:13px;color:#59655d}
+.note ul{padding-left:20px;margin:8px 0}
+footer{text-align:center;color:#878e86;font-size:12px;padding:22px}
+@media(max-width:700px){main{padding:32px 16px 50px}.cards{grid-template-columns:1fr}.card.full{grid-column:auto}.lead{font-size:14px}nav a{margin-left:10px;font-size:12px}.topline{align-items:flex-start}}
+@media(max-width:420px){nav a:first-child{display:none}.top-actions{width:100%}.top-actions .btn{flex:1}}
+@media print{
+ body{background:#fff;color:#111}header,.top-actions,.tip .tip-hide,footer{display:none!important}
+ main{max-width:none;padding:0}.progress-card{border:1px solid #bbb;break-inside:avoid}
+ .cards{grid-template-columns:1fr 1fr;gap:10px}.card{box-shadow:none;border:1px solid #bbb;padding:12px;break-inside:avoid}
+ .card.full{grid-column:1/-1}.item{font-size:11px;padding:6px 0}.item small{font-size:9px}
+ .note{background:#f4f4f4;break-inside:avoid}h1{font-size:30px}
+}
+</style>
+</head>
+<body>
+<header>
+<a class="brand" href="./index.html">LittleOne<small>by Mukund & Khushbu</small></a>
+<nav><a href="./index.html">← Registry home</a><a href="#checklist">Checklist</a></nav>
+</header>
+<main>
+<div class="topline">
+<div>
+<div class="eyebrow">A LITTLE PREPARATION, A LOT OF LOVE</div>
+<h1>Hospital bag<br>checklist ♡</h1>
+<p class="lead">A practical packing list for the hospital stay and the journey home — for the mother, the baby and the person accompanying you.</p>
+</div>
+<div class="top-actions">
+<button class="btn" type="button" onclick="window.print()">Print checklist</button>
+<button class="btn secondary" type="button" id="reset">Reset ticks</button>
+</div>
+</div>
+<div class="progress-card" aria-live="polite">
+<div class="progress-head"><span>Your packing progress</span><strong id="progress-text">0 of 0 packed</strong></div>
+<div class="track"><div class="fill" id="progress-fill"></div></div>
+</div>
+<div class="tip"><strong>Before you pack:</strong> Hospitals differ in what they provide and what they allow in labour rooms. Confirm the list with your maternity hospital, especially diapers, pads, clothes, food, and documents. Pack essentials in a small bag that is easy to reach.</div>
+<section class="cards" id="checklist">
+<article class="card">
+<div class="card-head"><div class="icon">📄</div><div><h2>Documents & admission</h2><p class="sub">Keep these together in one folder</p></div></div>
+<div class="items">
+<label class="item"><input type="checkbox" data-pack="hospital-file"><span>Hospital file, registration and appointment records</span></label>
+<label class="item"><input type="checkbox" data-pack="reports"><span>Pregnancy reports, scans, blood tests and prescriptions</span></label>
+<label class="item"><input type="checkbox" data-pack="blood-group"><span>Blood group information and any relevant medical notes</span></label>
+<label class="item"><input type="checkbox" data-pack="id-cards"><span>Photo ID for mother and birth partner</span></label>
+<label class="item"><input type="checkbox" data-pack="insurance"><span>Insurance / TPA card, approvals and payment details</span></label>
+<label class="item"><input type="checkbox" data-pack="contacts"><span>Emergency contacts and hospital contact numbers</span></label>
+<label class="item"><input type="checkbox" data-pack="birth-plan"><span>Birth preferences or birth plan, if you have one</span></label>
+</div>
+</article>
+<article class="card">
+<div class="card-head"><div class="icon">🤰</div><div><h2>For the mother</h2><p class="sub">Labour, recovery and going home</p></div></div>
+<div class="items">
+<label class="item"><input type="checkbox" data-pack="front-open"><span>2–3 loose, front-opening nighties or gowns<small>Useful for checks and breastfeeding</small></span></label>
+<label class="item"><input type="checkbox" data-pack="nursing-bras"><span>2 comfortable nursing bras</span></label>
+<label class="item"><input type="checkbox" data-pack="maternity-pads"><span>Maternity pads or disposable postpartum underwear<small>Confirm the type and quantity with your hospital</small></span></label>
+<label class="item"><input type="checkbox" data-pack="underwear"><span>Comfortable underwear and a few spare pairs</span></label>
+<label class="item"><input type="checkbox" data-pack="breast-pads"><span>Breast pads and nipple-care product, if you plan to use them</span></label>
+<label class="item"><input type="checkbox" data-pack="slippers"><span>Non-slip slippers and a pair of socks</span></label>
+<label class="item"><input type="checkbox" data-pack="toiletries"><span>Toothbrush, toothpaste, face wash, comb and basic toiletries</span></label>
+<label class="item"><input type="checkbox" data-pack="towel"><span>Personal towel, tissues and a small laundry bag</span></label>
+<label class="item"><input type="checkbox" data-pack="going-home-mom"><span>Loose, comfortable outfit and footwear for going home</span></label>
+<label class="item"><input type="checkbox" data-pack="hair-ties"><span>Hair ties, lip balm and glasses / lens case if needed</span></label>
+</div>
+</article>
+<article class="card">
+<div class="card-head"><div class="icon">👶</div><div><h2>For the baby</h2><p class="sub">Soft, simple newborn essentials</p></div></div>
+<div class="items">
+<label class="item"><input type="checkbox" data-pack="baby-clothes"><span>4–6 soft cotton vests or onesies</span></label>
+<label class="item"><input type="checkbox" data-pack="baby-sleepsuits"><span>3–4 front-opening sleepsuits / baby outfits</span></label>
+<label class="item"><input type="checkbox" data-pack="muslins"><span>3–4 muslin cloths or light swaddles</span></label>
+<label class="item"><input type="checkbox" data-pack="diapers"><span>A small starter pack of newborn diapers<small>Ask whether the hospital supplies these</small></span></label>
+<label class="item"><input type="checkbox" data-pack="cotton-wipes"><span>Unscented wipes or cotton wool, as advised by the hospital</span></label>
+<label class="item"><input type="checkbox" data-pack="burp-cloths"><span>2–3 soft burp cloths</span></label>
+<label class="item"><input type="checkbox" data-pack="baby-towel"><span>One soft baby towel and a washcloth</span></label>
+<label class="item"><input type="checkbox" data-pack="baby-weather"><span>One cap, socks and mittens if needed for the weather or requested by the hospital</span></label>
+<label class="item"><input type="checkbox" data-pack="baby-going-home"><span>One complete going-home outfit</span></label>
+<label class="item"><input type="checkbox" data-pack="baby-blanket"><span>A light blanket for the journey home</span></label>
+</div>
+</article>
+<article class="card">
+<div class="card-head"><div class="icon">🧑‍🤝‍🧑</div><div><h2>For the birth partner</h2><p class="sub">The person staying and helping</p></div></div>
+<div class="items">
+<label class="item"><input type="checkbox" data-pack="partner-clothes"><span>Change of clothes and a light layer</span></label>
+<label class="item"><input type="checkbox" data-pack="partner-toiletries"><span>Basic toiletries and any regular personal medication</span></label>
+<label class="item"><input type="checkbox" data-pack="charger"><span>Phone, charger and power bank</span></label>
+<label class="item"><input type="checkbox" data-pack="water-snacks"><span>Water bottle and permitted snacks</span></label>
+<label class="item"><input type="checkbox" data-pack="cash"><span>Some cash, cards and parking / transport details</span></label>
+<label class="item"><input type="checkbox" data-pack="support"><span>List of people to contact and key family numbers</span></label>
+</div>
+</article>
+<article class="card full">
+<div class="card-head"><div class="icon">🚗</div><div><h2>Before leaving hospital</h2><p class="sub">A few things to arrange for a smoother return home</p></div></div>
+<div class="items">
+<label class="item"><input type="checkbox" data-pack="car-seat"><span>Suitable, correctly installed infant car seat if travelling by car</span></label>
+<label class="item"><input type="checkbox" data-pack="transport"><span>Transport and a person to help carry the bags</span></label>
+<label class="item"><input type="checkbox" data-pack="discharge"><span>Discharge summary, prescriptions and follow-up appointment details</span></label>
+<label class="item"><input type="checkbox" data-pack="baby-records"><span>Baby's hospital records and vaccination information provided at discharge</span></label>
+<label class="item"><input type="checkbox" data-pack="home-ready"><span>Confirm someone has prepared the baby's basic things at home</span></label>
+</div>
+</article>
+</section>
+<section class="note">
+<h2>A few sensible reminders ♡</h2>
+<ul>
+<li>Ask your hospital what it provides before buying or packing large quantities of diapers, pads, gowns or baby-care products.</li>
+<li>Carry only medicines prescribed for the mother, preferably in their original packaging, and show them to the care team.</li>
+<li>Avoid packing unnecessary valuables, strong fragrances, baby powder or products the hospital has not approved.</li>
+<li>Keep the baby's sleep space at home simple and follow your care team's safe-sleep guidance; don't add pillows or soft toys to the sleep area.</li>
+<li>Keep the documents folder, phone and one change of clothes easy to access rather than buried at the bottom of the bag.</li>
+</ul>
+<p>This is a general planning checklist, not a substitute for your obstetrician's advice or your hospital's admission instructions.</p>
+</section>
+</main>
+<footer>Made with love · LittleOne</footer>
+<script>
+(function(){
+ const boxes=[...document.querySelectorAll('[data-pack]')];
+ const savedKey='littleone-hospital-bag-checklist-v1';
+ const text=document.getElementById('progress-text');
+ const fill=document.getElementById('progress-fill');
+ function update(){
+  const done=boxes.filter(box=>box.checked).length;
+  text.textContent=done+' of '+boxes.length+' packed';
+  fill.style.width=(boxes.length?done/boxes.length*100:0)+'%';
+  try{localStorage.setItem(savedKey,JSON.stringify(boxes.filter(box=>box.checked).map(box=>box.dataset.pack)))}catch(_){}
+ }
+ try{
+  const saved=JSON.parse(localStorage.getItem(savedKey)||'[]');
+  boxes.forEach(box=>box.checked=saved.includes(box.dataset.pack));
+ }catch(_){}
+ boxes.forEach(box=>box.addEventListener('change',update));
+ document.getElementById('reset').addEventListener('click',()=>{
+  boxes.forEach(box=>box.checked=false);update();
+ });
+ update();
+})();
+</script>
+</body>
+</html>

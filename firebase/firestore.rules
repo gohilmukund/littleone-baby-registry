@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function validSlot(giftId, slot) {
+      return
+        (giftId == 'soft-baby-bath-towel' && slot in ['0','1']) ||
+        (giftId == 'muslin-cloths-swaddles' && slot in ['0','1','2']) ||
+        (giftId == 'baby-board-books' && slot in ['0','1']) ||
+        (giftId == 'soft-cotton-bibs' && slot in ['0','1','2','3']) ||
+        (giftId == 'baby-storage-basket' && slot == '0') ||
+        (giftId == 'cotton-rompers-3-6-months' && slot in ['0','1','2']) ||
+        (giftId == 'age-appropriate-baby-toy' && slot == '0') ||
+        (giftId == 'portable-changing-mat' && slot == '0') ||
+        (giftId == 'baby-feeding-accessories' && slot == '0') ||
+        (giftId == 'baby-keepsake-box' && slot == '0') ||
+        (giftId == 'convertible-maternity-baby-bag' && slot == '0') ||
+        (giftId == 'soft-baby-blanket' && slot in ['0','1']);
+    }
+
+    match /reservations/{reservationId} {
+      // Only anonymous UID, gift ID, slot and timestamp are stored. Reads reveal no guest name/contact.
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['giftId','slot','uid','createdAt'])
+        && request.resource.data.keys().hasAll(['giftId','slot','uid','createdAt'])
+        && request.resource.data.giftId is string
+        && request.resource.data.slot is string
+        && validSlot(request.resource.data.giftId, request.resource.data.slot)
+        && reservationId == request.resource.data.giftId + '__' + request.resource.data.slot
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+      allow update: if false;
+      // Guests can release only their own reservation. Parent/admin release controls can be added separately.
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+  }
+}

@@ -71,7 +71,7 @@ function render(){
  watchCards();
  grid.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>{selected=+b.dataset.id;document.getElementById('dlgtitle').textContent=gifts[selected][1];document.getElementById('dlg').showModal()});
 }
-loadGifts().then(()=>render());
+window.giftsReady=loadGifts().then(()=>render());
 const progress=document.getElementById('scroll-progress');
 function updateProgress(){
  const max=document.documentElement.scrollHeight-window.innerHeight;
@@ -99,6 +99,7 @@ import {getFirestore,collection,doc,onSnapshot,runTransaction,serverTimestamp} f
 const firebaseConfig={apiKey:"AIzaSyA3T4Bzesi-sx7XDTxd-_bjHrKII4Apdss",authDomain:"littleone-baby-registry.firebaseapp.com",projectId:"littleone-baby-registry",storageBucket:"littleone-baby-registry.firebasestorage.app",messagingSenderId:"136117283174",appId:"1:136117283174:web:c0c42e77d0b82c7b8d80a7"};
 try{
  const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+ await window.giftsReady;
  await signInAnonymously(auth);
  onAuthStateChanged(auth,async user=>{
   if(!user)return;window.currentUid=user.uid;

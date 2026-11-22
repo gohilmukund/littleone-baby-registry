@@ -26,7 +26,21 @@ dialog[open]{animation:dialogPop .28s cubic-bezier(.2,.8,.2,1) both}
 <section class="note" id="note"><h2>Thank you for being part of our story ♡</h2><p>Every little thing is wrapped in love. We are grateful for your blessings, wishes and kindness as we get ready to welcome our baby.</p></section></main><footer>Made with love · LittleOne</footer>
 <dialog id="dlg"><button class="close" id="close" type="button">×</button><h2 id="dlgtitle">Reserve this gift</h2><p class="copy">Your name is private to the parents. Other guests only see that the gift is reserved.</p><form id="form"><input id="name" placeholder="Your name / family / group" required><input id="members" placeholder="Family members (optional)"><select id="relation"><option value="">Relationship (optional)</option><option>Family</option><option>Friend</option><option>Colleague</option><option>Other</option></select><textarea id="msg" placeholder="A little message (optional)" rows="3"></textarea><button class="reserve" type="submit">Confirm reservation ♡</button></form></dialog><div id="toast"></div>
 <script>
-const gifts=[['🧸','Soft baby bath towel','Baby care','A soft, absorbent towel for everyday bath time.',2],['🧺','Muslin cloths & swaddles','Clothing','Lightweight cloths for burping, swaddling and daily use.',3],['📚','Baby & board books','Play & learn','Simple picture books and sturdy little stories.',2],['🍼','Soft cotton bibs','Feeding','Everyday absorbent bibs in any colour or style.',4],['🧺','Baby storage basket','Nursery','A handy basket for small essentials.',1],['👕','Cotton rompers (3–6 months)','Clothing','Soft everyday outfits in a size to grow into.',3],['🪁','Age-appropriate baby toy','Play & learn','A simple toy made for little hands, no small detachable parts.',1],['🧳','Portable changing mat','Baby care','A foldable, easy-to-clean mat for outings.',1],['🥣','Baby feeding accessories','Feeding','Useful feeding accessories for when baby is ready.',1],['🎁','Baby keepsake box','Nursery','A little box for first memories, cards and photos.',1],['👜','Everyday diaper bag','Travel','A practical bag for baby essentials.',1],['🌙','Soft baby blanket','Nursery','For supervised cuddles and outings—not unattended sleep.',2]];
+let gifts=[];
+async function loadGifts(){
+ try{
+  const response=await fetch('./config/gifts.md',{cache:'no-store'});
+  if(!response.ok)throw new Error('Wishlist config could not be loaded');
+  const markdown=await response.text();
+  const sections=markdown.split('\n## ').filter(s=>s.trim());
+  gifts=sections.slice(1).map(section=>{
+   const lines=section.split('\n'),name=lines[0].trim(),fields={};
+   lines.slice(1).forEach(line=>{const parts=line.split(':');if(parts.length>1)fields[parts[0].trim()]=parts.slice(1).join(':').trim()});
+   return [null,name,fields.category||'Gift',fields.description||'',Number(fields.quantity||1),Number(fields.photo||0)];
+  });
+  if(!gifts.length)throw new Error('Wishlist config is empty');
+ }catch(error){grid.innerHTML='<p class="copy">Wishlist could not load. Please refresh in a moment.</p>';console.error(error)}
+}
 let reserved=JSON.parse(localStorage.getItem('littleone-preview-reservations')||'{}'),selected=-1;
 const grid=document.getElementById('grid');
 let revealObserver;
@@ -44,13 +58,13 @@ function watchCards(){
 }
 function render(){
  grid.innerHTML=gifts.map((g,i)=>{
-  const n=reserved[i]||0,avail=g[4]-n,col=i%3,row=Math.floor(i/3),y=[0,33.333,66.667,100][row];
+  const n=reserved[i]||0,avail=g[4]-n,photo=g[5],col=photo%3,row=Math.floor(photo/3),y=[0,33.333,66.667,100][row];
   return '<article class="card" style="--delay:'+((i%6)*65)+'ms"><div class="product-photo" role="img" aria-label="'+g[1]+' product photo" style="--x:'+(col*50)+'%;--y:'+y+'%"></div><div class="content"><span class="tag">'+g[2]+'</span><h3>'+g[1]+'</h3><p>'+g[3]+'</p><p>'+Math.max(0,avail)+' of '+g[4]+' available</p><button class="reserve" '+(avail<=0?'disabled':'')+' data-id="'+i+'">'+(avail<=0?'Reserved':'Reserve this gift ♡')+'</button></div></article>';
  }).join('');
  watchCards();
  grid.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>{selected=+b.dataset.id;document.getElementById('dlgtitle').textContent=gifts[selected][1];document.getElementById('dlg').showModal()});
 }
-render();
+loadGifts().then(()=>render());
 const progress=document.getElementById('scroll-progress');
 function updateProgress(){
  const max=document.documentElement.scrollHeight-window.innerHeight;

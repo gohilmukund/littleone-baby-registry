@@ -38,10 +38,10 @@ async function loadGifts(){
   if(!response.ok)throw new Error('Wishlist config could not be loaded');
   const markdown=await response.text();
   const sections=markdown.split('\n## ').filter(s=>s.trim());
-  gifts=sections.slice(1).map(section=>{
+  gifts=sections.slice(1).map((section,index)=>{
    const lines=section.split('\n'),name=lines[0].trim(),fields={};
    lines.slice(1).forEach(line=>{const parts=line.split(':');if(parts.length>1)fields[parts[0].trim()]=parts.slice(1).join(':').trim()});
-   const giftId=giftIds[gifts.length]||name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+   const giftId=giftIds[index]||name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
    return [giftId,name,fields.category||'Gift',fields.description||'',Number(fields.quantity||1),Number(fields.photo||0)];
   });
   if(!gifts.length)throw new Error('Wishlist config is empty');

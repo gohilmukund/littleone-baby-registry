@@ -64,9 +64,10 @@ function watchCards(){
  cards.forEach(card=>revealObserver.observe(card));
 }
 function render(){
+ const guNames=['નરમ બેબી બાથ ટુવાલ','મલમલનાં કપડાં અને સ્વેડલ','બેબી બોર્ડ બુક્સ','નરમ કોટન બિબ્સ','બેબી સ્ટોરેજ બાસ્કેટ','કોટન રોમ્પર્સ (3–6 મહિના)','ઉંમર મુજબનું બેબી રમકડું','પોર્ટેબલ ચેન્જિંગ મેટ','બેબી ફીડિંગ એસેસરીઝ','બેબી કીપસેક બોક્સ','મેટરનિટી અને બેબી બેગ','નરમ બેબી બ્લેન્કેટ'];
  grid.innerHTML=gifts.map((g,i)=>{
-  const n=(reservationsByGift[g[0]]||[]).length,avail=g[4]-n,photo=g[5],col=photo%3,row=Math.floor(photo/3),y=[0,33.333,66.667,100][row];
-  return '<article class="card" style="--delay:'+((i%6)*65)+'ms"><div class="product-photo" role="img" aria-label="'+g[1]+' product photo" style="--x:'+(col*50)+'%;--y:'+y+'%"></div><div class="content"><span class="tag">'+g[2]+'</span><h3>'+g[1]+'</h3><p>'+g[3]+'</p><p>'+Math.max(0,avail)+' of '+g[4]+' available</p><button class="reserve" '+(avail<=0?'disabled':'')+' data-id="'+i+'">'+(avail<=0?'Reserved':(n>0?'Reserve ('+avail+' left) ♡':'Reserve this gift ♡'))+'</button></div></article>';
+  const n=(reservationsByGift[g[0]]||[]).length,avail=g[4]-n,photo=g[5],col=photo%3,row=Math.floor(photo/3),y=[0,33.333,66.667,100][row],displayName=window.registryLang==='gu'?(guNames[i]||g[1]):g[1];
+  return '<article class="card" style="--delay:'+((i%6)*65)+'ms"><div class="product-photo" role="img" aria-label="'+displayName+' product photo" style="--x:'+(col*50)+'%;--y:'+y+'%"></div><div class="content"><span class="tag">'+g[2]+'</span><h3>'+displayName+'</h3><p>'+g[3]+'</p><p>'+Math.max(0,avail)+' / '+g[4]+' '+(window.registryLang==='gu'?'ઉપલબ્ધ':'available')+'</p><button class="reserve" '+(avail<=0?'disabled':'')+' data-id="'+i+'">'+(avail<=0?(window.registryLang==='gu'?'રિઝર્વ થઈ ગઈ':'Reserved'):(n>0?'Reserve ('+avail+' left) ♡':(window.registryLang==='gu'?'આ ભેટ રિઝર્વ કરો ♡':'Reserve this gift ♡')))+'</button></div></article>';
  }).join('');
  watchCards();
  grid.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>{selected=+b.dataset.id;document.getElementById('dlgtitle').textContent=gifts[selected][1];document.getElementById('dlg').showModal()});

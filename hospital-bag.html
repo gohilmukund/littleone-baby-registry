@@ -54,7 +54,7 @@ footer{text-align:center;color:#878e86;font-size:12px;padding:22px}
 <body>
 <header>
 <a class="brand" href="./index.html">LittleOne<small>by Mukund & Khushbu</small></a>
-<nav><a href="./index.html">← Registry home</a><a href="#checklist">Checklist</a></nav>
+<nav><a href="./index.html">← Registry home</a><a href="#checklist">Checklist</a><select id="language" aria-label="Language" style="width:auto;margin:0 0 0 12px;padding:8px"><option value="en">English</option><option value="gu">ગુજરાતી</option></select></nav>
 </header>
 <main>
 <div class="topline">
@@ -174,5 +174,51 @@ footer{text-align:center;color:#878e86;font-size:12px;padding:22px}
  update();
 })();
 </script>
-</body>
+<script>
+(function(){
+ const translations={
+  title:'હોસ્પિટલ બેગ ચેકલિસ્ટ ♡',lead:'હોસ્પિટલમાં રહેવા અને ઘરે પાછા ફરવા માટે માતા, બાળક અને સાથે આવનાર વ્યક્તિ માટે ઉપયોગી પેકિંગ યાદી.',
+  eyebrow:'થોડી તૈયારી, ઘણો બધો પ્રેમ',print:'ચેકલિસ્ટ પ્રિન્ટ કરો',reset:'ટિક દૂર કરો',progress:'તમારી પેકિંગ પ્રગતિ',
+  before:'પેકિંગ પહેલાં:',tip:'દરેક હોસ્પિટલમાં મળતી સુવિધાઓ અને લેબર રૂમના નિયમો અલગ હોઈ શકે છે. ખાસ કરીને ડાયપર, પેડ્સ, કપડાં, ખોરાક અને દસ્તાવેજો અંગે તમારી હોસ્પિટલમાં પુછીને ખાતરી કરો. જરૂરી વસ્તુઓ સરળતાથી મળી રહે તેવી નાની બેગમાં રાખો.',
+  documents:'દસ્તાવેજો અને દાખલાની માહિતી',documentsSub:'બધી વસ્તુઓ એક ફોલ્ડરમાં રાખો',mother:'માતા માટે',motherSub:'પ્રસૂતિ, સાજા થવાનો સમય અને ઘરે જવા માટે',baby:'બાળક માટે',babySub:'નવજાત માટે નરમ અને સરળ જરૂરી વસ્તુઓ',partner:'સાથે આવનાર વ્યક્તિ માટે',partnerSub:'રહેવા અને મદદ કરવા આવનાર વ્યક્તિ',leaving:'હોસ્પિટલમાંથી નીકળતાં પહેલાં',leavingSub:'ઘરે પરત ફરવાનું સરળ બનાવવા માટે',
+  reminders:'થોડી ઉપયોગી યાદ અપાવતી વાતો ♡',footer:'પ્રેમથી બનાવેલ · LittleOne',
+  items:{
+  'hospital-file':'હોસ્પિટલ ફાઇલ, નોંધણી અને મુલાકાતના રેકોર્ડ','reports':'ગર્ભાવસ્થાના રિપોર્ટ, સોનોગ્રાફી, લોહીની તપાસ અને પ્રિસ્ક્રિપ્શન','blood-group':'બ્લડ ગ્રુપની માહિતી અને સંબંધિત મેડિકલ નોંધો','id-cards':'માતા અને સાથે આવનાર વ્યક્તિનું ફોટો ID','insurance':'વીમા / TPA કાર્ડ, મંજૂરી અને ચુકવણીની વિગતો','contacts':'ઇમરજન્સી સંપર્કો અને હોસ્પિટલના ફોન નંબર','birth-plan':'જન્મ અંગેની પસંદગીઓ અથવા બર્થ પ્લાન, જો બનાવ્યો હોય',
+  'front-open':'આગળથી ખુલતી 2–3 ઢીલી નાઇટીઓ અથવા ગાઉન','nursing-bras':'2 આરામદાયક નર્સિંગ બ્રા','maternity-pads':'મેટરનિટી પેડ્સ અથવા ડિસ્પોઝેબલ પ્રસૂતિ પછીના અન્ડરવેર','underwear':'આરામદાયક અન્ડરવેર અને વધારાની જોડી','breast-pads':'બ્રેસ્ટ પેડ્સ અને જરૂર મુજબ નિપલ કેર પ્રોડક્ટ','slippers':'લપસી ન જવાય તેવી ચંપલ અને મોજાં','toiletries':'ટૂથબ્રશ, ટૂથપેસ્ટ, ફેસવોશ, કાંસકો અને જરૂરી ટોયલેટરીઝ','towel':'પોતાનો ટુવાલ, ટિશ્યૂ અને નાની લોન્ડ્રી બેગ','going-home-mom':'ઘરે જવા માટે ઢીલા અને આરામદાયક કપડાં તથા ચંપલ','hair-ties':'હેર ટાઈ, લિપ બામ અને જરૂર હોય તો ચશ્માં / લેન્સ કેસ',
+  'baby-clothes':'4–6 નરમ કોટન ઝભલા અથવા વનઝી','baby-sleepsuits':'3–4 આગળથી ખુલતા સ્લીપસૂટ / બાળકનાં કપડાં','muslins':'3–4 મલમલના કપડાં અથવા હળવા સ્વેડલ','diapers':'નવજાત માટે ડાયપરનો નાનો પેક','cotton-wipes':'હોસ્પિટલની સલાહ મુજબ સુગંધ વિનાના વાઇપ્સ અથવા કોટન','burp-cloths':'2–3 નરમ બર્પ ક્લોથ','baby-towel':'એક નરમ બેબી ટુવાલ અને નાનું કપડું','baby-weather':'હવામાન અથવા હોસ્પિટલની સલાહ મુજબ ટોપી, મોજાં અને મિટન્સ','baby-going-home':'ઘરે જવા માટે બાળકનો એક સંપૂર્ણ ડ્રેસ','baby-blanket':'ઘરે જવાના પ્રવાસ માટે હળવી ચાદર',
+  'partner-clothes':'કપડાંની એક વધારાની જોડી અને હળવું ઉપરનું વસ્ત્ર','partner-toiletries':'જરૂરી ટોયલેટરીઝ અને નિયમિત દવાઓ','charger':'ફોન, ચાર્જર અને પાવર બેંક','water-snacks':'પાણીની બોટલ અને મંજૂર નાસ્તો','cash':'થોડા રોકડા, કાર્ડ અને પાર્કિંગ / મુસાફરીની વિગતો','support':'સંપર્ક કરવાના લોકોની યાદી અને પરિવારના ફોન નંબર',
+  'car-seat':'કારમાં જવાનું હોય તો યોગ્ય રીતે લગાવેલી શિશુ કાર સીટ','transport':'મુસાફરીની વ્યવસ્થા અને બેગ ઉપાડવામાં મદદ કરનાર વ્યક્તિ','discharge':'ડિસ્ચાર્જ સમરી, પ્રિસ્ક્રિપ્શન અને ફોલો-અપ મુલાકાતની વિગતો','baby-records':'બાળકના હોસ્પિટલ રેકોર્ડ અને રસીકરણની માહિતી','home-ready':'ઘરે બાળકની જરૂરી વસ્તુઓ તૈયાર છે તેની ખાતરી'
+  }
+ };
+ const original=new Map();
+ const selectors={
+  '.eyebrow':translations.eyebrow,'h1':translations.title,'.lead':translations.lead,
+  '.top-actions .btn:first-child':translations.print,'.top-actions .btn:last-child':translations.reset,
+  '.progress-head span':translations.progress,
+  '.card:nth-child(1) h2':translations.documents,'.card:nth-child(1) .sub':translations.documentsSub,
+  '.card:nth-child(2) h2':translations.mother,'.card:nth-child(2) .sub':translations.motherSub,
+  '.card:nth-child(3) h2':translations.baby,'.card:nth-child(3) .sub':translations.babySub,
+  '.card:nth-child(4) h2':translations.partner,'.card:nth-child(4) .sub':translations.partnerSub,
+  '.card:nth-child(5) h2':translations.leaving,'.card:nth-child(5) .sub':translations.leavingSub,
+  '.note h2':translations.reminders,'footer':translations.footer
+ };
+ const lang=document.getElementById('language');
+ const nodes=[...document.querySelectorAll('[data-pack]')];
+ nodes.forEach(n=>original.set(n.dataset.pack,n.querySelector('span').innerHTML));
+ Object.entries(selectors).forEach(([s,v])=>{const n=document.querySelector(s);if(n)original.set(s,n.innerHTML)});
+ function apply(){
+  const gu=lang.value==='gu';document.documentElement.lang=gu?'gu':'en';
+  Object.entries(selectors).forEach(([s,v])=>{const n=document.querySelector(s);if(n)n.innerHTML=gu?v:original.get(s)});
+  nodes.forEach(n=>{const span=n.querySelector('span');span.innerHTML=gu?translations.items[n.dataset.pack]:original.get(n.dataset.pack)});
+  const tip=document.querySelector('.tip');if(gu)tip.innerHTML='<strong>'+translations.before+'</strong> '+translations.tip;else tip.innerHTML='<strong>Before you pack:</strong> Hospitals differ in what they provide and what they allow in labour rooms. Confirm the list with your maternity hospital, especially diapers, pads, clothes, food, and documents. Pack essentials in a small bag that is easy to reach.';
+  document.querySelector('.brand small').textContent='મુકુન્દ અને ખુશ્બુ તરફથી';
+  document.querySelector('nav a[href="./index.html"]').textContent=gu?'← રજિસ્ટ્રી હોમ':'← Registry home';
+  document.querySelector('nav a[href="#checklist"]').textContent=gu?'યાદી':'Checklist';
+  document.querySelector('.progress-head strong').textContent=gu?'0 માંથી 0 તૈયાર':'0 of 0 packed';
+  updateProgress();
+ }
+ function updateProgress(){const done=nodes.filter(n=>n.checked).length;document.getElementById('progress-text').textContent=lang.value==='gu'?nodes.length+' માંથી '+done+' તૈયાર':done+' of '+nodes.length+' packed';}
+ nodes.forEach(n=>n.addEventListener('change',updateProgress));lang.addEventListener('change',apply);apply();
+})();
+</script></body>
 </html>

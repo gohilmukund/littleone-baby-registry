@@ -18,6 +18,18 @@ service cloud.firestore {
         (giftId == 'soft-baby-blanket' && slot in ['0','1']);
     }
 
+    match /hospitalBagChecklist/{itemId} {
+      function validChecklistItem() { return itemId in ['hospital-file', 'reports', 'blood-group', 'id-cards', 'insurance', 'contacts', 'birth-plan', 'front-open', 'nursing-bras', 'maternity-pads', 'underwear', 'breast-pads', 'slippers', 'toiletries', 'towel', 'going-home-mom', 'hair-ties', 'baby-clothes', 'baby-sleepsuits', 'muslins', 'diapers', 'cotton-wipes', 'burp-cloths', 'baby-towel', 'baby-weather', 'baby-going-home', 'baby-blanket', 'partner-clothes', 'partner-toiletries', 'charger', 'water-snacks', 'cash', 'support', 'car-seat', 'transport', 'discharge', 'baby-records', 'home-ready']; }
+      allow read: if validChecklistItem();
+      allow create, update: if signedIn()
+        && validChecklistItem()
+        && request.resource.data.keys().hasOnly(['checked', 'updatedAt'])
+        && request.resource.data.keys().hasAll(['checked', 'updatedAt'])
+        && request.resource.data.checked is bool
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+
     match /reservations/{reservationId} {
       // Only anonymous UID, gift ID, slot and timestamp are stored. Reads reveal no guest name/contact.
       allow read: if true;

@@ -151,29 +151,78 @@ footer{text-align:center;color:#878e86;font-size:12px;padding:22px}
 </section>
 </main>
 <footer>Made with love · LittleOne</footer>
-<script>
-(function(){
- const boxes=[...document.querySelectorAll('[data-pack]')];
- const savedKey='littleone-hospital-bag-checklist-v1';
- const text=document.getElementById('progress-text');
- const fill=document.getElementById('progress-fill');
- function update(){
-  const done=boxes.filter(box=>box.checked).length;
-  text.textContent=done+' of '+boxes.length+' packed';
-  fill.style.width=(boxes.length?done/boxes.length*100:0)+'%';
-  try{localStorage.setItem(savedKey,JSON.stringify(boxes.filter(box=>box.checked).map(box=>box.dataset.pack)))}catch(_){}
- }
- try{
-  const saved=JSON.parse(localStorage.getItem(savedKey)||'[]');
-  boxes.forEach(box=>box.checked=saved.includes(box.dataset.pack));
- }catch(_){}
- boxes.forEach(box=>box.addEventListener('change',update));
- document.getElementById('reset').addEventListener('click',()=>{
-  boxes.forEach(box=>box.checked=false);update();
- });
- update();
-})();
-</script>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js';
+import { getFirestore, collection, doc, onSnapshot, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA3T4Bzesi-sx7XDTxd-_bjHrKII4Apdss",
+  authDomain: "littleone-baby-registry.firebaseapp.com",
+  projectId: "littleone-baby-registry",
+  storageBucket: "littleone-baby-registry.firebasestorage.app",
+  messagingSenderId: "136117283174",
+  appId: "1:136117283174:web:c0c42e77d0b82c7b8d80a7"
+};
+const boxes = [...document.querySelectorAll('[data-pack]')];
+const progressText = document.getElementById('progress-text');
+const progressFill = document.getElementById('progress-fill');
+const resetButton = document.getElementById('reset');
+let db;
+let applyingRemoteState = false;
+function updateProgress() {
+  const done = boxes.filter(box => box.checked).length;
+  const lang = document.getElementById('language').value;
+  progressText.textContent = lang === 'gu' ? boxes.length + ' માંથી ' + done + ' તૈયાર' : done + ' of ' + boxes.length + ' packed';
+  progressFill.style.width = (boxes.length ? done / boxes.length * 100 : 0) + '%';
+}
+function showError(message) {
+  console.error(message);
+  const tip = document.querySelector('.tip');
+  tip.insertAdjacentHTML('beforeend', '<p style="color:#9b4b42;margin:8px 0 0" role="alert">' + message + '</p>');
+}
+boxes.forEach(box => {
+  box.disabled = true;
+  box.addEventListener('change', async () => {
+    updateProgress();
+    if (applyingRemoteState || !db) return;
+    try {
+      await setDoc(doc(db, 'hospitalBagChecklist', box.dataset.pack), { checked: box.checked, updatedAt: serverTimestamp() });
+    } catch (error) {
+      box.checked = !box.checked;
+      updateProgress();
+      showError('Could not save this change. Please check your connection and try again.');
+    }
+  });
+});
+resetButton.disabled = true;
+resetButton.addEventListener('click', async () => {
+  if (!db) return;
+  resetButton.disabled = true;
+  try {
+    await Promise.all(boxes.map(box => setDoc(doc(db, 'hospitalBagChecklist', box.dataset.pack), { checked: false, updatedAt: serverTimestamp() })));
+  } catch (error) {
+    showError('Some items could not be reset. Please refresh to see the saved checklist.');
+  } finally { resetButton.disabled = false; }
+});
+try {
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  db = getFirestore(app);
+  await signInAnonymously(auth);
+  onSnapshot(collection(db, 'hospitalBagChecklist'), snapshot => {
+    const saved = new Map(snapshot.docs.map(item => [item.id, item.data().checked === true]));
+    applyingRemoteState = true;
+    boxes.forEach(box => { box.checked = saved.get(box.dataset.pack) === true; });
+    applyingRemoteState = false;
+    boxes.forEach(box => { box.disabled = false; });
+    resetButton.disabled = false;
+    updateProgress();
+  }, error => showError('Could not load the shared checklist from the database. Please refresh in a moment.'));
+} catch (error) {
+  showError('Could not connect to the shared checklist. Please refresh or check your connection.');
+}
+</script>>
 <script>
 (function(){
  const translations={
@@ -218,7 +267,7 @@ footer{text-align:center;color:#878e86;font-size:12px;padding:22px}
   updateProgress();
  }
  function updateProgress(){const done=nodes.filter(n=>n.checked).length;document.getElementById('progress-text').textContent=lang.value==='gu'?nodes.length+' માંથી '+done+' તૈયાર':done+' of '+nodes.length+' packed';}
- nodes.forEach(n=>n.addEventListener('change',updateProgress));lang.addEventListener('change',apply);apply();
+ lang.addEventListener('change',apply);apply();
 })();
 </script></body>
 </html>
